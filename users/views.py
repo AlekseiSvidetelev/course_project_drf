@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -7,6 +9,22 @@ from users.permissions import IsOwnerOrAdmin
 from users.serializers import PublicUserSerializer, UserSerializer
 
 
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(
+        operation_description=(
+            "Удаление пользователя по идентификатору. "
+            "Требует прав администратора или пользователя.\n\n"
+            "**Параметры пути:**\n"
+            "- `id` (int): Идентификатор пользователя\n\n"
+            "**Ответы:**\n"
+            "- `HTTP 204 No Content`: Успешное удаление\n"
+            "- `HTTP 404 Not Found`: Пользователь не найден\n"
+            "- `HTTP 403 Forbidden`: Нет прав для удаления\n\n"
+        ),
+        responses={204: "Пользователь успешно удалён", 403: "Доступ запрещён", 404: "Пользователь не найден"},
+    ),
+)
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer

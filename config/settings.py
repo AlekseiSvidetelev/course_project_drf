@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "drf_yasg",
+    "django_filters",
+    "django_celery_beat",
     "users",
     "habits",
 ]
@@ -79,11 +82,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    # "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
-    # "DEFAULT_PERMISSION_CLASSES": [
-    #     "rest_framework.permissions.IsAuthenticated",
-    # ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 
@@ -126,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Moscow"
 
 USE_I18N = True
 
@@ -152,23 +155,27 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=3600),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
-#
-# CELERY_TIMEZONE = TIME_ZONE
-# CELERY_TASK_TRACK_STARTED = True
-# CELERY_TASK_TIME_LIMIT = 30 * 60
-#
-# # set the celery broker url
-# CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
-# # set the celery result backend
-# CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
-#
-# CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-#
-# from celery.schedules import crontab
-#
-# CELERY_BEAT_SCHEDULE = {
-#     "deactivated-user-status": {
-#         "task": "users.tasks.deactivated_user_status",
-#         "schedule": timedelta(seconds=10),
-#     },
-# }
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "run-daily-scan": {
+        "task": "habits.tasks.run_daily_scan",
+        'schedule': timedelta(minutes=1),
+        # 'schedule': crontab(hour=3, minute=0),
+    },
+}
+
+TELEGRAM_URL = "https://api.telegram.org/bot"
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
