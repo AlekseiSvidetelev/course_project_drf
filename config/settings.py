@@ -14,6 +14,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -152,8 +153,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 AUTH_USER_MODEL = "users.User"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=3600),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 CELERY_TIMEZONE = TIME_ZONE
@@ -167,13 +168,11 @@ CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {
     "run-daily-scan": {
         "task": "habits.tasks.run_daily_scan",
-        'schedule': timedelta(minutes=1),
-        # 'schedule': crontab(hour=3, minute=0),
+        "schedule": crontab(hour=0, minute=0),
     },
 }
 

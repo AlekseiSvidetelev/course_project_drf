@@ -1,30 +1,25 @@
+from datetime import timedelta
+
 import requests
 from django.utils import timezone
-from datetime import timedelta
-from config.settings import TELEGRAM_URL, TELEGRAM_TOKEN
+
+from config.settings import TELEGRAM_TOKEN, TELEGRAM_URL
 from habits.models import Habit
 
 
-
 def send_telegram_notification(chat_id, message):
-    """Отправляет сообщение в телеграм"""
+    """Отправляет сообщение в телеграм и возвращает True при успехе."""
     params = {"chat_id": chat_id, "text": message}
     try:
-        requests.get(f"{TELEGRAM_URL}{TELEGRAM_TOKEN}/sendMessage", params=params)
+        requests.get(f"{TELEGRAM_URL}{TELEGRAM_TOKEN}/sendMessage", params=params, timeout=5)
+        return True
     except Exception as e:
-        print(f"Во время отправки сообщения для {chat_id} произошла ошибка {e}")
+        print(f"Ошибка при отправке: {e}")
+        return False
 
 
 def get_today_habits():
-    """Возвращает привычки, для которых нужно отправить уведомление сегодня"""
-    now = timezone.localtime()
-    print(now)
-    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    print(start_of_day)
-    end_of_day = start_of_day + timedelta(days=1)
-    print(end_of_day)
-    return Habit.objects.filter(start_time__gte=start_of_day, start_time__lt=end_of_day)
-
-
-if __name__ == "__main__":
-    send_telegram_notification(1029764221, "test")
+    """Привычки, которым нужно напомнить сегодня."""
+    today_start = timezone.localtime().replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timedelta(days=1)
+    return Habit.objects.filter(next_notification__isnull=True) | Habit.objects.filter(next_notification__lt=today_end)

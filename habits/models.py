@@ -57,7 +57,10 @@ class Habit(models.Model):
         null=True,
         blank=True,
         verbose_name="Последнее уведомление",
-        help_text="Время последнего отправленного уведомления"
+        help_text="Время последнего отправленного уведомления",
+    )
+    next_notification = models.DateTimeField(
+        null=True, blank=True, verbose_name="Следующее уведомление", help_text="Когда отправить следующий раз"
     )
 
     class Meta:
