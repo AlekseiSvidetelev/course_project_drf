@@ -1,14 +1,16 @@
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from habits.paginations import CustomPagination
 from users.models import User
 from users.permissions import IsOwnerOrAdmin
-from users.serializers import UserSerializer, PublicUserSerializer
+from users.serializers import PublicUserSerializer, UserSerializer
 
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class = CustomPagination
 
     def get_serializer_class(self):
         if self.action == "retrieve":

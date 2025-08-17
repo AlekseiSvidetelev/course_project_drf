@@ -1,5 +1,3 @@
-from os import path
-
 from rest_framework.routers import SimpleRouter
 
 from habits.apps import HabitsConfig

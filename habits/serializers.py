@@ -1,17 +1,17 @@
-from rest_framework.fields import IntegerField, CharField
-from rest_framework.relations import PrimaryKeyRelatedField
+from rest_framework.fields import IntegerField
 from rest_framework.serializers import ModelSerializer
 
 from habits.models import Habit
-from habits.validators import periodicity_validators, time_to_complete_validators,  \
-    HabitRewardsValidators
+from habits.validators import HabitRewardsValidators, periodicity_validators, time_to_complete_validators
 
 
 class HabitSerializer(ModelSerializer):
-    periodicity = IntegerField(validators=[periodicity_validators],)
-    time_to_complete = IntegerField(validators=[time_to_complete_validators],)
-
-
+    periodicity = IntegerField(
+        validators=[periodicity_validators],
+    )
+    time_to_complete = IntegerField(
+        validators=[time_to_complete_validators],
+    )
 
     class Meta:
         model = Habit
