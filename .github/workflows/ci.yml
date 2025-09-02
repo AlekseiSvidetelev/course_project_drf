@@ -46,7 +46,7 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
 
       - name: Установить зависимости
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --only main
 
       - name: Запустить тесты
         run: poetry run python manage.py test --verbosity=2
