@@ -16,7 +16,8 @@ jobs:
 
       - name: Install flake8
         run: |
-          pip -m install flake8 --upgrade pip
+          python -m pip install --upgrade pip
+          pip install flake8
 
       - name: Run flake8
         run: flake8 .
