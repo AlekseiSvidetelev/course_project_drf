@@ -31,24 +31,13 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Установить Poetry
+      - name: Install Poetry
         run: pip install poetry==1.8.5
 
-      - name: Настроить Poetry
-        run: poetry config virtualenvs.in-project true
-
-      - name: Кэшировать зависимости
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pypoetry
-            .venv
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-
-      - name: Установить зависимости
+      - name: Install dependencies
         run: poetry install --no-interaction --only main
 
-      - name: Запустить тесты
+      - name: Run tests
         env:
             SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: poetry run python manage.py test --verbosity=2
