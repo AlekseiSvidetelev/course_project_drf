@@ -25,21 +25,28 @@ jobs:
   tests:
     needs: lint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.13'
+          python-version: '3.12'
 
-      - name: Install Poetry
+      - name: Установить Poetry
         run: pip install poetry==1.8.5
 
-      - name: Install dependencies
-        run: poetry install
+      - name: Настроить Poetry
+        run: poetry config virtualenvs.in-project true
 
-      - name: Run tests
-        run: python manage.py test --verbosity=2
+      - name: Кэшировать зависимости
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pypoetry
+            .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Установить зависимости
+        run: poetry install --no-interaction
+
+      - name: Запустить тесты
+        run: poetry run python manage.py test --verbosity=2
