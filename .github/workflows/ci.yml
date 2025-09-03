@@ -72,14 +72,11 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOSTNAME }} << 'EOF'
-          mkdir -p ~/projects/course_9
-          
-          cat > ~/projects/course_9/.env << 'EENV'
-          ${{ secrets.ENV_FILE }}
-          EENV
+          mkdir -p ~/projects/course_9/
+          cd ~/projects/course_9/course_project_drf
           
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
           docker stop myapp || true
           docker rm myapp || true
-          docker run -d --name myapp -p 8000:8000 --env-file ~/projects/course_9/.env ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          docker run -d --name myapp -p 8000:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
           EOF
