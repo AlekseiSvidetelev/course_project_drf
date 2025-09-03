@@ -85,6 +85,10 @@ jobs:
           cd ~/projects/course_9/course_project_drf
           git pull origin feature/doker_homework
           echo "${{ secrets.ENV_FILE }}" > .env
+          
           docker-compose down
+          docker stop $(docker ps -aq) 2>/dev/null || true
+          docker rm   $(docker ps -aq) 2>/dev/null || true
+          docker-compose down --volumes --remove-orphans 2>/dev/null || true
           docker-compose up -d --build
           EOF
