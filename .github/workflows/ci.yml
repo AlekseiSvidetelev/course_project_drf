@@ -70,13 +70,21 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to server
+#        run: |
+#          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOSTNAME }} << 'EOF'
+#          cd ~/projects/course_9/course_project_drf
+#
+#          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+#          docker stop myapp || true
+#          docker rm myapp || true
+#          docker run -d --name myapp -p 8000:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+#          EOF
+
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOSTNAME }} << 'EOF'
-          mkdir -p ~/projects/course_9/
           cd ~/projects/course_9/course_project_drf
-          
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-          docker stop myapp || true
-          docker rm myapp || true
-          docker run -d --name myapp -p 8000:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          git pull origin feature/doker_homework
+          echo "${{ secrets.ENV_FILE }}" > .env
+          docker-compose down
+          docker-compose up -d --build
           EOF
