@@ -79,3 +79,7 @@ docker-compose down
 
 # Перезапуск
 docker-compose up -d --build
+
+# Демо
+Приложение развернуто по адресу: http://158.160.194.221/swagger/
+
