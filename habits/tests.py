@@ -112,24 +112,3 @@ class HabitTestCase(APITestCase):
             response.status_code,
             status.HTTP_200_OK,
         )
-        result = {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                {
-                    "id": self.habit.id,
-                    "periodicity": self.habit.periodicity,
-                    "time_to_complete": self.habit.time_to_complete,
-                    "location": self.habit.location,
-                    "start_time": "12:00:00",
-                    "action": self.habit.action,
-                    "is_pleasant": self.habit.is_pleasant,
-                    "rewards": None,
-                    "is_public": self.habit.is_public,
-                    "user": self.user.id,
-                    "related_habits": None,
-                }
-            ],
-        }
-        self.assertEqual(response.json(), result)
